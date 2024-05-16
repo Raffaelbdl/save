@@ -42,12 +42,12 @@ class SerializableObject:
     def unserialize(cls, path: Path):
         path = Path(path).resolve()
 
-        instance = cls()
+        kwargs = {}
         for attr, serial in cls.serializable_dict.items():
             _p = path.joinpath(attr)
-            setattr(instance, attr, serial.unserialize(_p))
+            kwargs[attr] = serial.unserialize(_p)
 
-        return instance
+        return cls(**kwargs)
 
 
 def save_file(
