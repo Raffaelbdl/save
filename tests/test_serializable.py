@@ -2,7 +2,13 @@ import os
 import shutil
 from pathlib import Path
 
+import pytest
+
+from save.serializable import Serializable
 from save.serializable import SerializableDict, SerializableObject, save_file
+
+from save.serializable import DummySerializable
+
 from save.serializable import JSONSerializable
 from save.serializable import PickleSerializable
 
@@ -57,13 +63,13 @@ def test_recursive_serialize_unserialize():
             {"a": JSONSerializable, "b": JSONSerializable}
         )
 
-        def __init__(self, a=0, b="1"):
+        def __init__(self, a, b):
             self.a, self.b = a, b
 
     class Foo(SerializableObject):
         serializable_dict = SerializableDict({"bar": Bar})
 
-        def __init__(self, bar=None) -> None:
+        def __init__(self, bar) -> None:
             self.bar = bar
 
     foo = Foo(Bar(1, "2"))
@@ -79,5 +85,43 @@ def test_recursive_serialize_unserialize():
 
     assert foo.bar.a == _foo.bar.a
     assert foo.bar.b == _foo.bar.b
+
+    shutil.rmtree(path)
+
+
+def test_raise_abc_errors():
+    class Foo(Serializable): ...
+
+    with pytest.raises(TypeError):
+        foo = Foo()
+
+
+def test_raise_invalid_attr():
+    class Foo(SerializableObject):
+        serializable_dict = SerializableDict({"a": DummySerializable})
+
+        def __init__(self, b) -> None:
+            self.b = b
+
+    path = Path("./foo")
+    foo = Foo(0)
+
+    with pytest.raises(AttributeError):
+        save_file(foo, path)
+
+
+def test_raise_invalid_arg():
+    class Foo(SerializableObject):
+        serializable_dict = SerializableDict({"a": JSONSerializable})
+
+        def __init__(self, b) -> None:
+            self.a = b
+
+    path = Path("./foo")
+    foo = Foo(0)
+
+    save_file(foo, path)
+    with pytest.raises(TypeError):
+        Foo.unserialize(path)
 
     shutil.rmtree(path)

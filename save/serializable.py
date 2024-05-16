@@ -79,6 +79,18 @@ def save_file(
 ##### Collection of Serializable #####
 
 
+class DummySerializable(Serializable):
+    """Does nothing"""
+
+    @staticmethod
+    def serialize(object: Any, path: Path):
+        return
+
+    @staticmethod
+    def unserialize(path: Path) -> Any:
+        return
+
+
 class JSONSerializable(Serializable):
     """Serializable using JSON."""
 
