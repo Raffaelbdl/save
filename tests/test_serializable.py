@@ -8,7 +8,6 @@ from save.serializable import Serializable
 from save.serializable import SerializableDict, SerializableObject, save_file
 
 from save.serializable import DummySerializable
-
 from save.serializable import JSONSerializable
 from save.serializable import PickleSerializable
 

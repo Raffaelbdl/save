@@ -2,10 +2,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-
 from flax.core import FrozenDict
 from safetensors.flax import save_file, load_file
-
 
 FlaxParams = dict
 ArrayDict = dict[str, Any]

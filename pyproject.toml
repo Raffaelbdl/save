@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "save"
+requires-python = ">=3.10"
+description = "An I/O libary"
+authors = [
+    {name = "Raffael Bolla Di Lorenzo", email = "raffaelbdl@gmail.com"}
+]
+dependencies = ["flax", "safetensors"]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+pytest = ["jax"]
+
+[project.urls]
+homepage = "https://github.com/Raffaelbdl/save"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md"], content-type = "text/markdown"}
+version = {attr = "kitae.version.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["save*"]
