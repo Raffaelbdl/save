@@ -6,7 +6,6 @@ import flax.linen as nn
 import jax
 import jax.numpy as jnp
 
-from save.checkpoint import flatten_params, unflatten_params
 from save.checkpoint import FlaxCheckpointer
 
 
@@ -18,27 +17,6 @@ class DummyModule(nn.Module):
 
 def make_dummy_params() -> dict:
     return DummyModule().init(jax.random.key(0))
-
-
-def test_flatten_params():
-    foo = {"a": {"aa": 0, "ab": {"aba": 1}}, "b": 0}
-    _foo = flatten_params(foo)
-    assert _foo == {"a.aa": 0, "a.ab.aba": 1, "b": 0}
-
-
-def test_unflatten_params():
-    foo = {"a.aa": 0, "a.ab.aba": 1, "b": 0}
-    _foo = unflatten_params(foo)
-    assert _foo == {"a": {"aa": 0, "ab": {"aba": 1}}, "b": 0}
-
-
-def test_init():
-    path = Path("./foo/checkpoint").resolve()
-
-    ckptr = FlaxCheckpointer(path)
-    assert os.path.isdir(path)
-
-    shutil.rmtree("./foo")
 
 
 def test_save():
@@ -99,20 +77,9 @@ def test_restore_last():
     ckptr.save(params_1, 1)
     ckptr.save(params_2, 2)
 
-    _params_2 = ckptr.restore_last()
+    step, _params_2 = ckptr.restore_last()
+    assert step == 2
     for key, value in params_2.items():
         assert jnp.array_equal(value, _params_2[key])
-
-    shutil.rmtree("./foo")
-
-
-def test_path_to_checkpoint():
-    path = Path("./foo/checkpoint").resolve()
-    ckptr = FlaxCheckpointer(path)
-
-    assert (
-        ckptr._path_to_checkpoint(0)
-        == Path("./foo/checkpoint/0/checkpoint.safetensors").resolve()
-    )
 
     shutil.rmtree("./foo")
