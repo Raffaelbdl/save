@@ -9,7 +9,7 @@ description = "An I/O libary"
 authors = [
     {name = "Raffael Bolla Di Lorenzo", email = "raffaelbdl@gmail.com"}
 ]
-dependencies = ["flax", "safetensors"]
+dependencies = ["flax", "safetensors", "cloudpickle"]
 dynamic = ["version", "readme"]
 
 [project.optional-dependencies]

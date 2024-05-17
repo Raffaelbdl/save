@@ -6,6 +6,9 @@ from pathlib import Path
 import pickle
 from typing import Any
 
+import cloudpickle
+
+
 SERIALIZABLE_DICT = "serializable_dict"
 
 
@@ -117,3 +120,17 @@ class PickleSerializable(Serializable):
     def unserialize(path: Path) -> Any:
         with path.open("rb") as file:
             return pickle.load(file)
+
+
+class CloudPickleSerializable(Serializable):
+    """Serializable using CloudPickle."""
+
+    @staticmethod
+    def serialize(object: Any, path: Path):
+        with path.open("wb") as file:
+            cloudpickle.dump(object, file)
+
+    @staticmethod
+    def unserialize(path: Path) -> Any:
+        with path.open("rb") as file:
+            return cloudpickle.load(file)
